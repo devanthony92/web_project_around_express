@@ -1,17 +1,30 @@
-const express = require("express");
-const usersRouter = require("./routes/users");
-const cardsRouter = require("./routes/cards");
+const express = require('express');
+const mongoose = require('mongoose');
+const usersRouter = require('./routes/users');
+const cardsRouter = require('./routes/cards');
 
 const app = express();
 const { PORT = 3000 } = process.env;
 
-app.use("/users", usersRouter);
-app.use("/cards", cardsRouter);
+mongoose.connect('mongodb://localhost:27017/aroundb');
+
+app.use(express.json());
+
+app.use((req, res, next) => {
+  req.user = {
+    _id: '6aa9bcec26159ae3ac991e77',
+  };
+
+  next();
+});
+
+app.use('/users', usersRouter);
+app.use('/cards', cardsRouter);
 
 app.use((req, res) => {
-	res.status(404).send({ message: "Recurso solicitado no encontrado" });
+  res.status(404).send({ message: 'Recurso solicitado no encontrado' });
 });
 
 app.listen(PORT, () => {
-	console.log(`App listening on port ${PORT}`);
+  console.log(`App listening on port ${PORT}`);
 });
